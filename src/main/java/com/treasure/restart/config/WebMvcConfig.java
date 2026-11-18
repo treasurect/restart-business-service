@@ -1,5 +1,6 @@
-package com.treasure.restart.helper;
+package com.treasure.restart.config;
 
+import com.treasure.restart.helper.JwtInterceptor;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +8,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.nio.file.Paths;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
@@ -18,16 +21,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/api/**")
-                .excludePathPatterns(
-                        "/api/user/loginPwd"
-                );
+                .addPathPatterns("/api/**");
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + uploadPath);
+                .addResourceLocations(Paths.get(uploadPath).toAbsolutePath().toUri().toString());
     }
 
     @Override
@@ -39,8 +39,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "http://127.0.0.1:5173",
                         "http://localhost:5173",
                         "https://www.treasurect.site",
-                        "https://treasurect.site",
-                        "http:",
                         "https://treasurect.site"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")

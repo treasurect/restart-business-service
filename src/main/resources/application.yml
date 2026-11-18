@@ -5,14 +5,13 @@ server:
 spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/restart?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-    username: root
-    password: Tct241904
+    username: restart_app
+    password: ${DB_PWD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   sql:
     init:
-      mode: always
-      schema-locations: classpath:schema.sql
+      mode: never
 
   servlet:
     multipart:
@@ -25,5 +24,7 @@ mybatis:
 
 file:
   upload-path: /opt/restart-server/${file.upload-dir}
-  #    access-url: https://api.treasurect.site/uploads/
   upload-dir: uploads/
+
+jwt:
+  public-key-path: ${JWT_PUBLIC_KEY_PATH}

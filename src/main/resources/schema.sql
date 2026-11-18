@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `sys_user`
     `password`   VARCHAR(255) NOT NULL COMMENT '密码',
     `nickname`   VARCHAR(50)           DEFAULT NULL COMMENT '昵称',
     `avatar`     VARCHAR(500)          DEFAULT NULL COMMENT '头像',
+    `cover_url`     VARCHAR(500)          DEFAULT NULL COMMENT '头像',
     `status`     TINYINT      NOT NULL DEFAULT 1 COMMENT '状态：0禁用，1正常',
     `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updated_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -50,3 +51,33 @@ CREATE TABLE IF NOT EXISTS `moment_images`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci
     COMMENT ='朋友圈图片';
+
+CREATE TABLE IF NOT EXISTS ai_conversation
+(
+    id         BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '会话ID',
+    user_id    BIGINT       NOT NULL COMMENT '所属用户ID',
+    title      VARCHAR(200) NOT NULL DEFAULT '新对话' COMMENT '会话标题',
+    created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_user_updated (user_id, updated_at)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci
+    COMMENT ='AI聊天会话表';
+
+CREATE TABLE IF NOT EXISTS ai_message
+(
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '消息ID',
+    conversation_id BIGINT      NOT NULL COMMENT '所属会话ID',
+    role            VARCHAR(20) NOT NULL COMMENT '消息角色：user或assistant',
+    content         MEDIUMTEXT  NOT NULL COMMENT '消息内容',
+    message_type    VARCHAR(30) NOT NULL DEFAULT 'text' COMMENT '消息类型：text、image、file、audio',
+    extra           JSON        NULL     COMMENT '扩展信息：图片地址、文件信息等',
+    created_at      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status          VARCHAR(20) NOT NULL DEFAULT 'COMPLETED' COMMENT '消息状态：GENERATING、COMPLETED、CANCELLED、FAILED、TIMEOUT',
+    INDEX idx_conversation_id (conversation_id, id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci
+    COMMENT ='AI聊天消息表';
