@@ -17,12 +17,9 @@ public interface ExtMapper {
                 mi.sort,
                 mi.created_at AS createdAt,
                 m.content AS momentContent,
-                u.id AS createUserId,
-                u.username AS createUserName,
-                u.avatar AS createUserAvatar
+                m.user_id AS createUserId
                 FROM moment_images mi
                 INNER JOIN moments m ON mi.moment_id = m.id
-                INNER JOIN sys_user u ON m.user_id = u.id
                 INNER JOIN (SELECT id FROM moments ORDER BY RAND() LIMIT 3) rm ON m.id = rm.id
                             WHERE mi.sort = (SELECT MIN(mi2.sort) FROM moment_images mi2 WHERE mi2.moment_id = mi.moment_id)
                 ORDER BY RAND()

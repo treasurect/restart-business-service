@@ -1,6 +1,8 @@
 package com.treasure.restart.func.moment;
 
 import com.treasure.common.UserContext;
+import com.treasure.restart.client.UserClient;
+import com.treasure.restart.client.UserSimpleVO;
 import com.treasure.restart.dto.MomentListResponse;
 import com.treasure.restart.dto.MomentPublishRequest;
 import com.treasure.restart.entity.Moment;
@@ -14,16 +16,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 public class MomentServiceImpl implements MomentService {
     private final MomentMapper momentMapper;
     private final MomentImageMapper momentImageMapper;
+    private final UserClient userClient;
 
-    public MomentServiceImpl(MomentMapper momentMapper, MomentImageMapper momentImageMapper) {
+    public MomentServiceImpl(MomentMapper momentMapper, MomentImageMapper momentImageMapper, UserClient userClient) {
         this.momentMapper = momentMapper;
         this.momentImageMapper = momentImageMapper;
+        this.userClient = userClient;
     }
 
     @Override
@@ -86,13 +91,21 @@ public class MomentServiceImpl implements MomentService {
                         Collectors.mapping(MomentImage::getImageUrl, Collectors.toList())
                 )
         );
+        List<Long> userIds = momentListRows.stream()
+                .map(MomentListRow::getUserId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+        Map<Long, UserSimpleVO> userMap = userClient.getUsersByIds(userIds);
+
         List<MomentListResponse.MomentItemResponse> items = new ArrayList<>();
         for (MomentListRow momentRow : momentListRows) {
             MomentListResponse.MomentItemResponse itemResponse = new MomentListResponse.MomentItemResponse();
             itemResponse.setId(momentRow.getId());
             itemResponse.setUserId(momentRow.getUserId());
-            itemResponse.setUsername(momentRow.getUserName());
-            itemResponse.setUserAvatar(momentRow.getUserAvatar());
+            UserSimpleVO user = userMap.get(momentRow.getUserId());
+            itemResponse.setUsername(user == null ? null : user.username());
+            itemResponse.setUserAvatar(user == null ? null : user.avatar());
             itemResponse.setContent(momentRow.getContent());
             itemResponse.setImages(imageMap.getOrDefault(momentRow.getId(), Collections.emptyList()));
             itemResponse.setCreatedAt(momentRow.getCreatedAt());

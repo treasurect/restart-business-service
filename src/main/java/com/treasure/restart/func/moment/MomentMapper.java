@@ -31,11 +31,8 @@ public interface MomentMapper {
                     m.id,
                     m.content,
                     m.created_at AS createdAt,
-                    m.user_id AS userId,
-                    u.username AS userName,
-                    u.avatar AS userAvatar
+                    m.user_id AS userId
                 FROM moments m
-                LEFT JOIN sys_user u ON u.id = m.user_id
             <where>
                 <if test="type == 'mine'">
                     AND m.user_id = #{userId}
