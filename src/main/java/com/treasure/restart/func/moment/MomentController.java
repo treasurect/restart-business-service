@@ -1,8 +1,8 @@
 package com.treasure.restart.func.moment;
 
-import com.treasure.restart.base.BaseResponse;
+import com.treasure.common.UserContext;
+import com.treasure.common.response.BaseResponse;
 import com.treasure.restart.dto.MomentPublishRequest;
-import com.treasure.restart.helper.UserContext;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

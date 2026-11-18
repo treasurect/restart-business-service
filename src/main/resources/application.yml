@@ -3,13 +3,9 @@ server:
   address: 0.0.0.0
 
 spring:
-  #local
-  config:
-    import: optional:file:${user.home}/.config/restart-server/application.properties
-
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/restart?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-    username: root
+    username: restart_app
     password: ${DB_PWD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
@@ -30,15 +26,5 @@ file:
   upload-path: /opt/restart-server/${file.upload-dir}
   upload-dir: uploads/
 
-deepseek:
-  api-key: ${DEEPSEEK_API_KEY}
-  base-url: https://api.deepseek.com
-  model: deepseek-flash
-  connect-timeout: 10s
-  response-timeout: 180s
-  tokenizer:
-    path: ${DEEPSEEK_TOKENIZER_PATH:./tokenizers/v41/tokenizer.json}
-
-#local
 jwt:
-  secret: ${JWT_SECRET}
+  public-key-path: ${JWT_PUBLIC_KEY_PATH}

@@ -1,43 +1,55 @@
+
 package com.treasure.restart.helper;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 @Component
 public class JwtUtils {
 
-    private final SecretKey key;
+    private final PublicKey publicKey;
 
-    private static final long EXPIRE_TIME =
-            7 * 24 * 60 * 60 * 1000L;
+    public JwtUtils(
+            @Value("${jwt.public-key-path}") String publicKeyPath
+    ) {
+        try {
+            String pem = Files.readString(Path.of(publicKeyPath));
 
-    public JwtUtils(@Value("${jwt.secret}") String secret) {
-        this.key = Keys.hmacShaKeyFor(
-                secret.getBytes(StandardCharsets.UTF_8)
-        );
-    }
+            String publicKeyContent = pem
+                    .replace("-----BEGIN PUBLIC KEY-----", "")
+                    .replace("-----END PUBLIC KEY-----", "")
+                    .replaceAll("\\s", "");
 
-    public String generateToken(Long userId) {
-        Date now = new Date();
-        Date expire = new Date(now.getTime() + EXPIRE_TIME);
+            byte[] keyBytes = Base64.getDecoder()
+                    .decode(publicKeyContent);
 
-        return Jwts.builder()
-                .subject(String.valueOf(userId))
-                .issuedAt(now)
-                .expiration(expire)
-                .signWith(key)
-                .compact();
+            X509EncodedKeySpec keySpec =
+                    new X509EncodedKeySpec(keyBytes);
+
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+
+            this.publicKey = keyFactory.generatePublic(keySpec);
+
+        } catch (Exception e) {
+            throw new IllegalStateException(
+                    "RSA 公钥加载失败，请检查 JWT_PUBLIC_KEY_PATH",
+                    e
+            );
+        }
     }
 
     public Long getUserId(String token) {
+
         String subject = Jwts.parser()
-                .verifyWith(key)
+                .verifyWith(publicKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()

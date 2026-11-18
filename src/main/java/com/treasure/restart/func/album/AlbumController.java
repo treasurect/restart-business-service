@@ -1,6 +1,6 @@
 package com.treasure.restart.func.album;
 
-import com.treasure.restart.base.BaseResponse;
+import com.treasure.common.response.BaseResponse;
 import com.treasure.restart.dto.AlbumListResponse;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
