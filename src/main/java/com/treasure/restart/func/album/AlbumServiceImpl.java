@@ -1,7 +1,7 @@
 package com.treasure.restart.func.album;
 
-import com.treasure.restart.client.UserClient;
-import com.treasure.restart.client.UserSimpleVO;
+import com.treasure.restart.func.UserClient;
+import com.treasure.restart.dto.UserSimpleVO;
 import com.treasure.restart.dto.AlbumListResponse;
 import com.treasure.restart.entity.AlbumItem;
 import jakarta.annotation.Resource;

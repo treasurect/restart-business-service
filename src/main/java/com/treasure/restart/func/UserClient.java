@@ -1,6 +1,7 @@
-package com.treasure.restart.client;
+package com.treasure.restart.func;
 
 import com.treasure.common.response.BaseResponse;
+import com.treasure.restart.dto.UserSimpleVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

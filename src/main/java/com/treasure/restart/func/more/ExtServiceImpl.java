@@ -1,7 +1,7 @@
 package com.treasure.restart.func.more;
 
-import com.treasure.restart.client.UserClient;
-import com.treasure.restart.client.UserSimpleVO;
+import com.treasure.restart.func.UserClient;
+import com.treasure.restart.dto.UserSimpleVO;
 import com.treasure.restart.entity.AlbumItem;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;

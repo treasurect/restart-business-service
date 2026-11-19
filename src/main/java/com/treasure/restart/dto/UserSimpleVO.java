@@ -1,4 +1,4 @@
-package com.treasure.restart.client;
+package com.treasure.restart.dto;
 
 public record UserSimpleVO(
         Long id,

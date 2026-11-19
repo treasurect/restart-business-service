@@ -1,8 +1,8 @@
 package com.treasure.restart.func.moment;
 
 import com.treasure.common.UserContext;
-import com.treasure.restart.client.UserClient;
-import com.treasure.restart.client.UserSimpleVO;
+import com.treasure.restart.func.UserClient;
+import com.treasure.restart.dto.UserSimpleVO;
 import com.treasure.restart.dto.MomentListResponse;
 import com.treasure.restart.dto.MomentPublishRequest;
 import com.treasure.restart.entity.Moment;
