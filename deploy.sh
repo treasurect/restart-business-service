@@ -13,16 +13,16 @@ SERVER_USER="treasure"
 SERVER_HOST="124.222.46.122"
 REMOTE="${SERVER_USER}@${SERVER_HOST}"
 
-REMOTE_DIR="/opt/restart-server"
-REMOTE_JAR="${REMOTE_DIR}/restart-server.jar"
-REMOTE_TEMP="/tmp/restart-server.jar"
+REMOTE_DIR="/opt/restart-business"
+REMOTE_JAR="${REMOTE_DIR}/restart-business-service.jar"
+REMOTE_TEMP="/tmp/restart-business-service.jar"
 
-SERVICE_NAME="restart-server"
+SERVICE_NAME="restart-business"
 
 cd "$PROJECT_DIR"
 
 echo "================================"
-echo "开始发布 restart-server"
+echo "开始发布 restart-business"
 echo "================================"
 
 # ==================================
@@ -31,16 +31,20 @@ echo "================================"
 
 echo "开始 Maven 打包..."
 
-mvn clean package -DskipTests
+if [[ -x "$PROJECT_DIR/mvnw" ]]; then
+    "$PROJECT_DIR/mvnw" clean package -DskipTests
+else
+    mvn clean package -DskipTests
+fi
 
 # 查找可执行 JAR
 JARS=()
 
-for file in "$PROJECT_DIR"/target/restart-server*.jar; do
+for file in "$PROJECT_DIR"/target/restart-business-service*.jar; do
     [[ -f "$file" ]] || continue
 
     case "$file" in
-        *-sources.jar|*-javadoc.jar|*-plain.jar|*.original)
+        *-sources.jar|-javadoc.jar|-plain.jar|*.original)
             continue
             ;;
     esac
@@ -49,7 +53,7 @@ for file in "$PROJECT_DIR"/target/restart-server*.jar; do
 done
 
 if [[ ${#JARS[@]} -ne 1 ]]; then
-    echo "错误：没有找到唯一的 restart-server JAR"
+    echo "错误：没有找到唯一的 restart-business-service JAR"
     printf '%s\n' "${JARS[@]}"
     exit 1
 fi
@@ -92,6 +96,7 @@ ssh "$REMOTE" "
     fi
 
     sudo mv '$REMOTE_TEMP' '$REMOTE_JAR'
+    sudo chown '$SERVER_USER:$SERVER_USER' '$REMOTE_JAR'
 "
 
 echo "JAR 替换成功"
@@ -100,7 +105,7 @@ echo "JAR 替换成功"
 # 6. 重启服务
 # ==================================
 
-echo "正在重启 restart-server..."
+echo "正在重启 $SERVICE_NAME..."
 
 ssh "$REMOTE" "
     sudo systemctl restart '$SERVICE_NAME'
@@ -118,7 +123,7 @@ if ! ssh "$REMOTE" "
 "; then
 
     echo "================================"
-    echo "restart-server 启动失败"
+    echo "$SERVICE_NAME 启动失败"
     echo "================================"
 
     ssh "$REMOTE" "
@@ -134,13 +139,13 @@ fi
 # ==================================
 
 echo "================================"
-echo "restart-server 发布成功"
+echo "$SERVICE_NAME 发布成功"
 echo "================================"
 
 ssh "$REMOTE" "
     sudo systemctl status '$SERVICE_NAME' --no-pager
 
-    echo '========== 最近启动日志 =========='
-
-    sudo journalctl -u '$SERVICE_NAME' -n 30 --no-pager
+#    echo '========== 最近启动日志 =========='
+#
+#    sudo journalctl -u '$SERVICE_NAME' -n 30 --no-pager
 "

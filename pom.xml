@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.treasure</groupId>
-    <artifactId>restart-server</artifactId>
-    <version>0.0.2</version>
-    <name>restart-server</name>
-    <description>restart-server</description>
+    <artifactId>restart-business-service</artifactId>
+    <version>0.0.1</version>
+    <name>restart-business-service</name>
+    <description>restart-business-service</description>
     <url/>
     <licenses>
         <license/>
