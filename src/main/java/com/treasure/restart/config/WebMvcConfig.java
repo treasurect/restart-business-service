@@ -15,19 +15,11 @@ import java.nio.file.Paths;
 public class WebMvcConfig implements WebMvcConfigurer {
     @Resource
     private JwtInterceptor jwtInterceptor;
-    @Value("${file.upload-path}")
-    private String uploadPath;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/api/**");
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(Paths.get(uploadPath).toAbsolutePath().toUri().toString());
     }
 
     @Override
